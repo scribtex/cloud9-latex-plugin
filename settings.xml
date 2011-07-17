@@ -1,0 +1,19 @@
+<a:application xmlns:a="http://ajax.org/2005/aml">
+    <div class="header">
+        <span></span><div>LaTeX Compiler</div>
+    </div>
+
+    <a:vbox edge="0 5 4 0" class="underlined">
+        <a:label>Main file</a:label>
+        <a:textbox value="[latex/compiler/@main_path]" />
+    </a:vbox>
+    
+    <a:hbox edge="3 5 2 5">
+        <a:label flex="1">Compiler</a:label>
+        <a:dropdown default="pdflatex" value="[{require('ext/settings/settings').model}::latex/compiler/@compiler]" width="100">
+            <a:item value="pdflatex">pdflatex</a:item>
+            <a:item value="latex">latex</a:item>
+            <a:item value="xelatex">xetex</a:item>
+        </a:dropdown>
+    </a:hbox>
+</a:application>
