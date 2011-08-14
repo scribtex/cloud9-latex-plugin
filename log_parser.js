@@ -137,12 +137,15 @@ define(function(require, exports, modules) {
         
       // Warnings have ill defined syntax, but normally come with a 
       // 'Warning:' label somewhere.
-      } else if (m = line.match(/(.*) Warning:(.*)$/)) {
-        current_file.path = (current_file.path || '');
-        warnings.push({
-          file: current_file.path,
-          message: m[2]
-        });
+      } else if (m = line.match(/.* Warning:(.*)$/)) {
+        var warning = {
+            file    : current_file.path || '',
+            message : m[1],
+        }
+        if (m = warning.message.match(/line ([0-9]+)/)) {
+            warning.line = parseInt(m[1], 10);
+        }
+        warnings.push(warning);
       } else {
         // An error description begins with a ! and a summary of the 
         // error on the same line. Error descriptions tend to end with a

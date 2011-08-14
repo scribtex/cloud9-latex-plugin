@@ -1,7 +1,8 @@
 <a:application xmlns:a="http://ajax.org/2005/aml">
     <a:skin id="latex"
       src        = "{require('ext/latex/compile').skin}" 
-      media-path = "/static/style/images/" />
+      media-path = "/static/style/images/"
+      icon-path  = "/static/style/icons/" />
 
     <a:menu id="mnuViewLog">    
         <a:item disabled="true" caption="View Log" />

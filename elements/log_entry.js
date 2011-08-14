@@ -5,7 +5,7 @@ apf.logentry = function(struct, tagName){
 };
 
 (function(){
-    this.$supportedProperties.push("summary", "content", "lineno", "path", "type");
+    this.$supportedProperties.push("summary", "content", "lineno", "path", "type", "ongoto");
 
     this.$propHandlers["summary"] = function(summary) {
         if (!this.$summary) return;
@@ -25,13 +25,41 @@ apf.logentry = function(struct, tagName){
         if (!this.$container) return;
         apf.setStyleClass(this.$container, type);
     };
+
+    this.$propHandlers["path"] = function(path) {
+        if (!this.$path) return
+        this.$path.innerHTML = path;
+        apf.setStyleClass(this.$container, "hasLocation");
+    };
     
+    this.$propHandlers["lineno"] = function(lineno) {
+        if (!this.$lineno) return
+        this.$lineno.innerHTML = lineno + "";
+        apf.setStyleClass(this.$container, "hasLocation");
+    };
+
+    this.$propHandlers["ongoto"] = function(callback) {
+        this.$gotoButton = new apf.button({
+            caption : "Goto",
+            skin    : "gotobutton",
+            skinset : "latex",
+            icon    : "arrow_right.png"
+        });
+        apf.document.body.appendChild(this.$gotoButton);
+        this.$goto.appendChild(this.$gotoButton.$ext);
+
+        this.$gotoButton.addEventListener("click", callback);
+    };
+
     this.$draw = function(){
         this.$ext       = this.$getExternal();
         this.$container = this.$getLayoutNode("main", "container", this.$ext);
         this.$toggle    = this.$getLayoutNode("main", "toggle", this.$ext);
         this.$summary   = this.$getLayoutNode("main", "summary", this.$ext);
+        this.$goto      = this.$getLayoutNode("main", "goto", this.$ext);
         this.$content   = this.$getLayoutNode("main", "content", this.$ext);
+        this.$path      = this.$getLayoutNode("main", "path", this.$ext);
+        this.$lineno    = this.$getLayoutNode("main", "lineno", this.$ext);
     };
 
     this.$hasContent = function() {
