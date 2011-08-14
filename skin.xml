@@ -39,7 +39,23 @@
         }
         
         .summary_line {
-            padding: 5px;
+            padding: 3px 6px;
+            position: relative;
+        }
+
+        .summary_line .toggle {
+            width: 10px;
+            height: 10px;
+            background-image: url("images/tree_close_arrow.png");
+            background-position: -10px 0;
+            position: absolute;
+            top: 8px;
+            left: 6px;
+            display: none;
+        }
+
+        .summary_line .message {
+            line-height: 20px;
         }
         
         .content {
@@ -48,17 +64,45 @@
             font-size: 0.9em;
             color: #666;
             white-space: pre;
+            display: none;
         }
+
+        .hasContent .summary_line .toggle {
+            display: block;
+        }
+        .hasContent .summary_line .message {
+            margin-left: 15px;
+        }
+
+        .hideContent .content {
+            display: none;
+        }
+        .hideContent .summary_line .toggle {
+            background-position: 0px 0px;
+        }
+
+        .showContent .content {
+            display: block;
+        }
+        .showContent .summary_line .toggle {
+            background-position: -10px 0px;
+        }
+
     ]]></a:style>
     <a:presentation>
-        <a:main container="./div" summary="./div/div[1]/div[1]" content="./div/div[2]">
-            <div>
-                <div class="log_entry">
-                    <div class="summary_line">
-                        <div class="message"></div>
-                    </div>
-                    <div class="content"></div>
+        <a:main 
+          container = "."
+          toggle    = "./div[1]/div[1]"
+          summary   = "./div[1]/div[2]"
+          goto      = "./div[1]/div[2]"
+          content   = "./div[2]">
+            <div class="log_entry">
+                <div class="summary_line">
+                    <div class="toggle"></div>
+                    <div class="message"></div>
+                    <div class="goto"></div>
                 </div>
+                <div class="content"></div>
             </div>
         </a:main>
     </a:presentation>
