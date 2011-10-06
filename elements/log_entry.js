@@ -42,8 +42,7 @@ apf.logentry = function(struct, tagName){
         this.$gotoButton = new apf.button({
             caption : "Goto",
             skin    : "gotobutton",
-            skinset : "latex",
-            icon    : "arrow_right.png"
+            skinset : "latex"
         });
         apf.document.body.appendChild(this.$gotoButton);
         this.$goto.appendChild(this.$gotoButton.$ext);

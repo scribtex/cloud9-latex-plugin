@@ -11,13 +11,10 @@
     <a:bar id="tbLatexCompile">
         <a:divider skin="c9-divider" />  
         <a:button id="btnCompile"
-          caption  = "compile"
+          caption  = "Compile"
           skin     = "c9-toolbarbutton"
           icon     = "run.png"
           onclick  = "require('ext/latex/compile').compile()" /> 
-        <a:splitbutton id="btnStatus"
-          caption  = "No Errors"
-          submenu  = "mnuViewLog" />
     </a:bar>
     
     <a:vbox id="noPdf" edge="5 5 5 5">

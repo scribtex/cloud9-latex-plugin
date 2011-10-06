@@ -67,7 +67,6 @@ return ext.register("ext/latex/compile", {
         this.hotitems["compile"] = [btnCompile];
         
         this.setState("idle");
-        btnStatus.hide();
         
         this.addTabs();
         
@@ -261,9 +260,9 @@ return ext.register("ext/latex/compile", {
             }
 
             var logEntry = new apf.logentry({
-                summary : entry.message,
-                content : entry.content,
-                path    : path,
+                summary : self.$apfEscape(entry.message),
+                content : self.$apfEscape(entry.content),
+                path    : self.$apfEscape(path),
                 lineno  : entry.line,
                 type    : type
             }) 
@@ -476,19 +475,15 @@ return ext.register("ext/latex/compile", {
         switch(this.state) {
         case "idle":
             btnCompile.enable();
-            btnStatus.hide();
             break;
         case "compiling":
             btnCompile.disable();
-            btnStatus.hide();
             break;
         case "parsingLog":
             btnCompile.disable();
-            btnStatus.hide();
             break;
         case "done":
             btnCompile.enable();
-            btnStatus.show();
         }
     },
     
@@ -563,6 +558,18 @@ return ext.register("ext/latex/compile", {
             }
         });
     },
+
+	/* 
+	 * APF interprets content between { and } as bindings to data and
+	 * tries to replace it. These appear naturally in many strings to do
+	 * with LaTeX so we must escape every string we pass to APF.
+	 */
+	$apfEscape : function(str) {
+		if (typeof str === "string")
+			return str.replace("{", "\\{").replace("}", "\\}");
+		else
+			return str;
+	},
 
     duplicate : function() {
         var config = lstRunCfg.selected;
