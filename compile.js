@@ -67,7 +67,8 @@ return ext.register("ext/latex/compile", {
         this.hotitems["compile"] = [btnCompile];
         
         this.setState("idle");
-        
+       
+        this.sideBySide = true;
         this.addTabs();
         
         mnuCtxTree.insertBefore(new apf.item({
@@ -92,12 +93,9 @@ return ext.register("ext/latex/compile", {
     },
     
     addTabs : function() {
-        // Make space on the right hand side of the editor tabs
-        var editorTabBar = tabEditors.$ext.selectNodes("div[1]")[0];
-        if (editorTabBar)
-            editorTabBar.style["margin-right"] = "130px";
+        var self = this;
 
-        var tab = new apf.bar({
+        this.tabBar = new apf.bar({
             skinset  : "latex",
             skin     : "basic",
             style    : "padding : 0 0 33px 0;position:absolute;", //53px
@@ -115,17 +113,6 @@ return ext.register("ext/latex/compile", {
         this.logContent = logContent;
         logContent.removeNode();
     
-        // Even though we have two groups of tabs we want them to behave like
-        // one, so when a tab in one is activated we deactivate the tab in the 
-        // other.
-        var self = this;
-        tabOutput.addEventListener("beforeswitch",  function() { 
-            self.deactivateEditorTabs();
-        });
-        tabEditors.addEventListener("beforeswitch", function() {
-            self.deactivateOutputTabs();
-        });
-        
         // This is a patch to fix my lack of understanding as to why the content 
         // of the tabs is not always correctly resized to the size of the page
         tabOutput.addEventListener("afterswitch", function(e) {
@@ -140,10 +127,30 @@ return ext.register("ext/latex/compile", {
                 self.afterSwitchFromPdfTab();
             }
         });
-        
-        tabPlaceholder.addEventListener("resize", function(e){
+       
+        if (this.sideBySide) {
+            this.$initSideBySideTabs();
+        } else {
+            this.$initSinglePaneTabs();
+        }
+
+    },
+
+    $initSideBySideTabs: function() {
+        this.pdfSplitter = splitterPanelPdf;
+        this.colPdf = colPdf;
+        this.pdfSplitter.show();
+        this.colPdf.show();
+
+        this.hbox = this.colPdf.appendChild(new apf.hbox({flex : 1, padding : 5, splitters : true}));
+        var tabPlaceholder = this.hbox.appendChild(
+            new apf.bar({id:"tabPdfPlaceholder", flex:1, skin:"basic"})
+        );
+
+        var self = this;
+        tabPlaceholder.addEventListener("resize", this.resizeTabCallback = function(e){
             // Copied from ext/editors/editors.js to put the tabs in the right place
-            var ext = tab.$ext, ph;
+            var ext = self.tabBar.$ext, ph;
             var pos = apf.getAbsolutePosition(ph = tabPlaceholder.$ext);
             ext.style.left = pos[0] + "px";
             ext.style.top  = pos[1] + "px";
@@ -151,6 +158,63 @@ return ext.register("ext/latex/compile", {
             ext.style.width = (ph.offsetWidth + 2 + (apf.isGecko && colRight.visible ? 2 : 0) - d[0]) + "px";
             ext.style.height = (ph.offsetHeight - d[1]) + "px";
         });
+
+        this.colPdf.addEventListener("resize", function(e) {
+            self.showPdf();
+        });
+    },
+
+    $destroySideBySideTabs: function() {
+        this.pdfSplitter.hide();
+        this.colPdf.hide();
+    
+        this.hbox.removeNode();
+        delete this.hbox;
+
+        tabPlaceholder.removeEventListener("resize", this.resizeTabCallback);
+        delete this.resizeTabCallback;
+    },
+
+    $initSinglePaneTabs: function() {
+        // Make space on the right hand side of the editor tabs
+        var editorTabBar = tabEditors.$ext.selectNodes("div[1]")[0];
+        if (editorTabBar)
+            editorTabBar.style["margin-right"] = "130px";
+
+        // Even though we have two groups of tabs we want them to behave like
+        // one, so when a tab in one is activated we deactivate the tab in the 
+        // other.
+        tabOutput.addEventListener("beforeswitch", this.tabOutputCallback = function() { 
+            self.deactivateEditorTabs();
+        });
+        tabEditors.addEventListener("beforeswitch", this.tabEditorsCallback = function() {
+            self.deactivateOutputTabs();
+        });
+
+        var self = this;
+        tabPlaceholder.addEventListener("resize", this.resizeTabCallback = function(e){
+            // Copied from ext/editors/editors.js to put the tabs in the right place
+            var ext = self.tabBar.$ext, ph;
+            var pos = apf.getAbsolutePosition(ph = tabPlaceholder.$ext);
+            ext.style.left = pos[0] + "px";
+            ext.style.top  = pos[1] + "px";
+            var d = apf.getDiff(ext);
+            ext.style.width = (ph.offsetWidth + 2 + (apf.isGecko && colRight.visible ? 2 : 0) - d[0]) + "px";
+            ext.style.height = (ph.offsetHeight - d[1]) + "px";
+        });
+    },
+
+    $destroySinglePaneTabs: function() {
+        // Remove the space on the right hand side of the editor tabs
+        var editorTabBar = tabEditors.$ext.selectNodes("div[1]")[0];
+        if (editorTabBar)
+            editorTabBar.style["margin-right"] = "0";
+
+        tabOutput.removeEventListener("beforeswitch", this.tabOutputCallback);
+        tabEditors.removeEventListener("beforeswitch", this.tabEditorsCallback);
+
+        tabPlaceholder.removeEventListener("resize", this.resizeTabCallback);
+        delete this.resizeTabCallback;
     },
     
     deactivateEditorTabs : function() {
@@ -166,11 +230,11 @@ return ext.register("ext/latex/compile", {
     
     initOutputTabs: function() {
         if (!tabOutput.getPage("pdfPage")) {
-            var pdfPage = tabOutput.add("PDF", "pdfPage");
+            this.pdfPage = tabOutput.add("PDF", "pdfPage");
         }
         
         if (!tabOutput.getPage("logPage")) {
-            var logTabPage = tabOutput.add("Log", "logPage");
+            this.logPage = tabOutput.add("Log", "logPage");
         }
     },
 
@@ -201,14 +265,18 @@ return ext.register("ext/latex/compile", {
     
     showPdfTab: function() {
         tabOutput.set("pdfPage");
-        this.deactivateEditorTabs();
+        if (!this.sideBySide) {
+            this.deactivateEditorTabs();
+        }
         tabOutput.getPage("pdfPage").$activate();
         this.showPdf();
     },
     
     showLogTab: function() {
         tabOutput.set("logPage");
-        this.deactivateEditorTabs();
+        if (!this.sideBySide) {
+            this.deactivateEditorTabs();
+        }
         tabOutput.getPage("logPage").$activate();
     },
     
@@ -249,9 +317,22 @@ return ext.register("ext/latex/compile", {
         while (page.childNodes.length > 0) {
             page.firstChild.removeNode();
         }
-        
+
+        // Force some styling to let us scroll the log
         page.$ext.style["overflow"] = "scroll";
 
+        // Do our best to extract the errors from the log
+        var parsedLog = logParser.parse(content);
+
+        // Update the Log tab to show the number of errors
+        var totalErrors = parsedLog.errors.length + parsedLog.warnings.length
+        if (totalErrors > 0) {
+            page.setAttribute("caption", "Log (" + totalErrors + ")")
+        } else {
+            page.setAttribute("caption", "Log")
+        }
+
+        // Append nicely formatted summaries of the errors and warnings
         var self = this;
         function addLogEntry(entry, type) {
             var path;
@@ -274,7 +355,6 @@ return ext.register("ext/latex/compile", {
             }
         }
 
-        var parsedLog = logParser.parse(content);
         for (i = 0; i < parsedLog.errors.length; i++) {
             var error = parsedLog.errors[i];
             addLogEntry(error, "error");
@@ -284,7 +364,8 @@ return ext.register("ext/latex/compile", {
             var warning = parsedLog.warnings[i];
             addLogEntry(warning, "warning");
         }
-        
+
+        // Append the raw log
         var preElement = this.logContent.selectNodes("pre")[0];
         if (preElement)
             preElement.$ext.innerHTML = content;
@@ -484,6 +565,18 @@ return ext.register("ext/latex/compile", {
             break;
         case "done":
             btnCompile.enable();
+            if (this.sideBySide && colPdf.getWidth() < 10) {
+                // Set the Pdf view to half the editor area.
+                // For some reason we need to do this twice for it to work?
+                splitterPanelPdf.update(
+                    splitterPanelLeft.getLeft() + 
+                    (colMiddle.getWidth() + colPdf.getWidth())/2
+                );
+                splitterPanelPdf.update(
+                    splitterPanelLeft.getLeft() + 
+                    (colMiddle.getWidth() + colPdf.getWidth())/2
+                );
+            }
         }
     },
     
@@ -559,17 +652,17 @@ return ext.register("ext/latex/compile", {
         });
     },
 
-	/* 
-	 * APF interprets content between { and } as bindings to data and
-	 * tries to replace it. These appear naturally in many strings to do
-	 * with LaTeX so we must escape every string we pass to APF.
-	 */
-	$apfEscape : function(str) {
-		if (typeof str === "string")
-			return str.replace("{", "\\{").replace("}", "\\}");
-		else
-			return str;
-	},
+    /* 
+     * APF interprets content between { and } as bindings to data and
+     * tries to replace it. These appear naturally in many strings to do
+     * with LaTeX so we must escape every string we pass to APF.
+     */
+    $apfEscape : function(str) {
+        if (typeof str === "string")
+            return str.replace("{", "\\{").replace("}", "\\}");
+        else
+            return str;
+    },
 
     duplicate : function() {
         var config = lstRunCfg.selected;
