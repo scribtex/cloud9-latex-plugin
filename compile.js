@@ -18,6 +18,7 @@ var filesystem = require("ext/filesystem/filesystem");
 var logParser = require("ext/latex/log_parser");
 var pdf = require("ext/latex/elements/pdf");
 var logEntry = require("ext/latex/elements/log_entry");
+var compileView = require("ext/latex/view");
 
 return ext.register("ext/latex/compile", {
     name    : "LaTeX Compilation",
@@ -90,6 +91,10 @@ return ext.register("ext/latex/compile", {
         }
         
         ide.addEventListener("afterfilesave", updateModifiedDate);
+
+        this.view = new compileView();
+        this.view.init();
+
     },
     
     addTabs : function() {
