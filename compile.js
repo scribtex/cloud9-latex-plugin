@@ -68,7 +68,7 @@ return ext.register("ext/latex/compile", {
         this.hotitems["compile"] = [btnCompile];
         
        
-        this.sideBySide = false;
+        this.sideBySide = true;
         this.addTabs();
         
         this.setState("idle");
@@ -151,8 +151,8 @@ return ext.register("ext/latex/compile", {
                 id   : "colPdf",
                 flex : 1
             });
-            hboxMain.appendChild(this.pdfSplitter);
-            hboxMain.appendChild(this.colPdf);
+            hboxMain.appendChild(this.pdfSplitter, colRight);
+            hboxMain.appendChild(this.colPdf, colRight);
         }
         this.pdfSplitter.show();
         this.colPdf.show();
