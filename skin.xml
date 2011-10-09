@@ -62,14 +62,12 @@
         .content {
             padding: 6px;
             padding-top: 2px;
-            font-size: 0.9em;
             white-space: pre;
             display: none;
         }
 
         .location {
             display: none;
-            font-size: 0.9em;
             padding: 0px 6px 3px 6px;
         }
 
@@ -130,72 +128,32 @@
 <a:button name="gotobutton">
     <a:style><![CDATA[
         .gotobutton {
-            height             : 18px;
-            overflow           : hidden;
+            display            : inline;
+            padding-left       : 7px;
             cursor             : pointer;
-            position           : relative;
             -moz-user-select   : none; 
             -khtml-user-select : none; 
             user-select        : none;
-            line-height        : 16px;
-            border:1px solid transparent;
-        }
-        
-        .hbox > .gotobutton {
-            height : 23px;
-        }
-        
-        .gotobutton .c9-icon {
-            display: none;
-            width:23px;
-            height:19px;
-            position:absolute;
-            top:1px;
-            left:2px;
-            background-position : 0 0;
-            background-repeat   : no-repeat;
-        }
-        
-        .gotobuttonIcon .c9-icon{
-            display : block;
         }
         
         .gotobutton .c9-label {
-            position:relative;
-            overflow:hidden;
-            font-family:Arial;
-            font-size:12px;
             color:#346CB7;
-            line-height:14px;
-            padding: 1px 6px 0 6px;
         }
 
         .gotobuttonOver .c9-label {
             color:#235BA6;
             text-decoration: underline;
         }
-        
-        .gotobuttonEmpty .c9-icon {
-            position:relative;
-        }
-        
-        .gotobuttonEmpty .c9-label {
-            display:none;
-        }
-        
-        .gotobuttonIcon .c9-label{
-            padding:1px 6px 0 22px;
-        }
     ]]></a:style>
 
     <a:presentation>
         <a:main 
-          caption      = "div[2]/text()"
+          caption      = "span[2]/text()"
           background = "."
-          icon       = "div[1]">
+          icon       = "span[1]">
             <div class="gotobutton">
-                <div class="c9-icon"></div>
-                <div class="c9-label">-</div>
+                <span class="c9-icon"></span>
+                <span class="c9-label">Goto</span>
             </div>
         </a:main>
     </a:presentation>
@@ -209,27 +167,24 @@
         position:relative;
         padding-top: 32px;
         border-bottom: 1px solid white;
-        background-color:#e8e8e8;
+        background-color:#fafafa;
     }
 
     .pdf_tab .btnsesssioncontainer {
-        padding : 5px 20px 0 1px;
+        padding : 5px 5px 0 1px;
         z-index : 100;
         height: 25px;
         overflow: visible;
         white-space: nowrap;
-        color: #f5f5f5;
+        color: #555;
         font-family : Arial;
         font-size : 12px;
-        border-bottom : 1px solid white;
-        background: -webkit-gradient(linear,left bottom,left top,color-stop(0, #262829),color-stop(1, #2f3031));
-        background: -moz-linear-gradient(center bottom,#262829 0%, #2f3031 100%);
+        border-bottom : 1px solid #999;
         margin-top : -32px;
         width : auto;
-        
-        -moz-box-shadow    : 0px 1px 0px rgba(255, 255, 255, 0.05) inset;
-        -webkit-box-shadow : 0px 1px 0px rgba(255, 255, 255, 0.05) inset;
-        box-shadow         : 0px 1px 0px rgba(255, 255, 255, 0.05) inset;
+
+        background: none;
+        background-color: #f5f5f5;
     }
 
     .pdf_tab .btnsesssioncontainer>div {
@@ -243,29 +198,37 @@
     }
 
     .pdf_tab .btnsesssioncontainer .session_btn {
-        padding      : 0 20px;
+        padding      : 0 4px;
         position     : relative;
-        margin-right : -20px;
         margin-top   : 0;
         height:25px;
-        border-bottom:1px solid white;
+
         float: right;
     }
 
     .pdf_tab .btnsesssioncontainer .session_btn .tab_middle {
-        background-image    : url(images/editor_tab.png);
-        background-position : 0 -104px;
-        height              : 20px;
+        height              : 19px;
         position            : relative;
         overflow            : hidden;
         padding             : 5px 0 0 0;
+
+        border                : 1px solid #999;
+        border-bottom         : none;
+        -moz-border-radius    : 5px 5px 0 0;
+        -webkit-border-radius : 5px 5px 0 0;
+        -o-border-radius      : 5px 5px 0 0;
+        border-radius         : 5px 5px 0 0;
+
+        background-color: #f0f0f0;
+        background: -webkit-gradient(linear,left bottom,left top,color-stop(0, #e8e8e8),color-stop(1, #fafafa));
+        background: -moz-linear-gradient(center bottom,#e8e8e8 0%,#fafafa 100%);
     }
 
     .pdf_tab .btnsesssioncontainer .session_btn .tab_middle .sessiontab_icon {
         height:8px;
-        left:0;
+        left:4px;
         position:absolute;
-        top:10px;
+        top:8px;
         width:5px;
     }
     
@@ -273,9 +236,26 @@
         background-repeat: no-repeat;
         background-position: 0 0;
     }
+    
+    .pdf_tab .btnsesssioncontainer .saving_active .sessiontab_icon {
+        background-image: url(images/save-indicator-active-tab.gif);
+    }
+    
+    .pdf_tab .btnsesssioncontainer .saving .sessiontab_icon {
+        background-image: url(images/save-indicator-inactive-tab.gif);
+    }
+    
+    .pdf_tab .btnsesssioncontainer .loading_active .sessiontab_icon {
+        background-image: url(images/load-indicator-active-tab.gif);
+    }
+    
+    .pdf_tab .btnsesssioncontainer .loading .sessiontab_icon {
+        background-image: url(images/load-indicator-inactive-tab.gif);
+    }
 
     .pdf_tab .btnsesssioncontainer .session_btn .tab_middle .sessiontab_title {
         overflow : hidden;
+        margin   : 0 10px;
         padding  : 0 0 0 0;
         -moz-user-select: -moz-none;
         -khtml-user-select: none;
@@ -285,8 +265,8 @@
     }
 
     .pdf_tab .btnsesssioncontainer .session_btn.btnclose .tab_middle .sessiontab_title {
-        margin-right : 15px;
-        margin-left : 8px;
+        margin-right : 20px;
+        margin-left : 10px;
     }
 
     .pdf_tab .scale .session_btn .sessiontab_title{
@@ -296,60 +276,24 @@
         white-space : nowrap;
     }
 
-    .pdf_tab .btnsesssioncontainer .tab_left,
-    .pdf_tab .btnsesssioncontainer .tab_right {
-        position            : absolute;
-        height              : 25px;
-        width               : 20px;
-        background-image    : url(images/editor_tab.png);
-        background-repeat   : no-repeat;
-        top                 : 0;
-    }
-
-    .pdf_tab .btnsesssioncontainer .tab_left {
-        background-position : 0 -78px;
-        left                : 0;
-    }
-    .pdf_tab .btnsesssioncontainer .tab_right {
-        background-position : 0 -130px;
-        right               : 0;
-    }
-
-    .pdf_tab .btnsesssioncontainer div.down {
-        text-shadow: none;
-        color: #d9d9d9;
-    }
-
     .pdf_tab .btnsesssioncontainer div.over .tab_middle {
-        background-position : 0 -182px;
-    }
-    .pdf_tab .btnsesssioncontainer div.over .tab_left {
-        background-position : 0 -156px;
-    }
-    .pdf_tab .btnsesssioncontainer div.over .tab_right {
-        background-position : 0 -208px;
     }
 
     .pdf_tab .btnsesssioncontainer div.curbtn {
-        color       : #333333;
         cursor      : default;
-        text-shadow : rgba(255, 255, 255, 1) 0px 1px 0px;
-        z-index     : 1;
         height:25px;
-        border-bottom:1px solid #e8e8e8;
     }
 
     .pdf_tab .btnsesssioncontainer div.curbtn .tab_middle {
-        background-position : 0 -26px;
-        padding             : 6px 0 0 0;
-        height:19px;
-        color:#000000;
+        height: 20px;
+        background: none;
+        background-color: #fafafa;
+        color: #333;
     }
-    .pdf_tab .btnsesssioncontainer div.curbtn .tab_left {
-        background-position : 0 0;
-    }
-    .pdf_tab .btnsesssioncontainer div.curbtn .tab_right {
-        background-position : 0 -52px;
+
+    .pdf_tab .btnsesssioncontainer div.over .tab_middle {
+        border-color: #666;
+        color: #333;
     }
 
     .pdf_tab .scale .btn .tab_middle {
@@ -367,70 +311,54 @@
         height              : 14px;
         display             : block;
         position            : absolute;
-        right               : 0;
-        top                 : 7px;
+        right               : 3px;
+        top                 : 5px;
         background-image    : url(images/close_tab_btn.png);
         background-repeat   : no-repeat;
-        background-position : 0 -14px;
+        background-position : 0 0;
     }
 
     .pdf_tab .btnsesssioncontainer .btnclose strong:hover {
-        background-position : -14px -14px;
-    }
-
-    .pdf_tab .btnsesssioncontainer .btnclose strong:active {
-        background-position : -28px -14px;
-    }
-
-    .pdf_tab .btnsesssioncontainer .curbtn.btnclose strong {
-        background-position : 0 0;
-        top: 7px;
-    }
-
-    .pdf_tab .btnsesssioncontainer .curbtn.btnclose strong:hover {
         background-position : -14px 0;
     }
 
-    .pdf_tab .btnsesssioncontainer .curbtn.btnclose strong:active {
+    .pdf_tab .btnsesssioncontainer .btnclose strong:active {
         background-position : -28px 0;
     }
 
     .pdf_tab .editor_bg {
-        top : 32px;
+        top : 31px;
         bottom : 0px;
         height : auto;
         position : absolute;
         margin: 0 auto;
-        background: #e8e8e8 url(images/editor_tab_bg.png) repeat 0 0;
-        /*border-bottom: 1px solid #8c8c8c;
-        border-left: 1px solid #8c8c8c;
-        border-right: 1px solid #8c8c8c;*/
         overflow: hidden;
         clear: both;
         left: 0;
         right: 0;
+        border-left: 1px solid #999;
     }
-
+    
     .pdf_tab .session_page {
         display : none;
         position : absolute;
-        top : 32px;
+        top : 31px;
         bottom : 0;
         left : 0;
         right : 0;
         z-index : 10;
         margin: 0 auto;
-        background-color: #e8e8e8;
-        /*border-bottom: 1px solid #8C8C8C;*/
-        border-top:3px solid #e8e8e8;
+        background-color: #fafafa;
         overflow: hidden;
         clear: both;
+        border-left: 1px solid #999;
     }
 
     .pdf_tab .session_page.curpage{
         display : block;
     }
 ]]></a:style>
+
 <a:presentation>
     <a:main pages="." buttons="div[1]">
         <div class="pdf_tab">
@@ -450,8 +378,6 @@
                 <div class="sessiontab_icon"> </div>
                 <div class="sessiontab_title">-</div>
             </div>
-            <div class="tab_left"> </div>
-            <div class="tab_right"> </div>
         </div>
     </a:button>
     <a:btnclose>

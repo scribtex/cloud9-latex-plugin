@@ -38,7 +38,7 @@ return ext.register("ext/latex/compile", {
     
     clsi : {
         proxiedUrl   : "/clsi",
-        unproxiedUrl : "http://localhost:3000"
+        unproxiedUrl : "http://localhost:3001"
     },
     
     hook : function() {
@@ -67,10 +67,11 @@ return ext.register("ext/latex/compile", {
         
         this.hotitems["compile"] = [btnCompile];
         
-        this.setState("idle");
        
-        this.sideBySide = true;
+        this.sideBySide = false;
         this.addTabs();
+        
+        this.setState("idle");
         
         mnuCtxTree.insertBefore(new apf.item({
             caption : "Set as main file",
@@ -142,8 +143,17 @@ return ext.register("ext/latex/compile", {
     },
 
     $initSideBySideTabs: function() {
-        this.pdfSplitter = splitterPanelPdf;
-        this.colPdf = colPdf;
+        if (!this.pdfSplitter) {
+            this.pdfSplitter = new apf.splitter({
+                id : "splitterPanelPdf"
+            });
+            this.colPdf = new apf.vbox({
+                id   : "colPdf",
+                flex : 1
+            });
+            hboxMain.appendChild(this.pdfSplitter);
+            hboxMain.appendChild(this.colPdf);
+        }
         this.pdfSplitter.show();
         this.colPdf.show();
 
@@ -561,6 +571,10 @@ return ext.register("ext/latex/compile", {
         switch(this.state) {
         case "idle":
             btnCompile.enable();
+            if (this.sideBySide) {
+                this.colPdf.hide();
+                this.pdfSplitter.hide();
+            }
             break;
         case "compiling":
             btnCompile.disable();
@@ -570,17 +584,23 @@ return ext.register("ext/latex/compile", {
             break;
         case "done":
             btnCompile.enable();
-            if (this.sideBySide && colPdf.getWidth() < 10) {
-                // Set the Pdf view to half the editor area.
-                // For some reason we need to do this twice for it to work?
-                splitterPanelPdf.update(
-                    splitterPanelLeft.getLeft() + 
-                    (colMiddle.getWidth() + colPdf.getWidth())/2
-                );
-                splitterPanelPdf.update(
-                    splitterPanelLeft.getLeft() + 
-                    (colMiddle.getWidth() + colPdf.getWidth())/2
-                );
+            if (this.sideBySide) {
+                this.colPdf.show();
+                this.pdfSplitter.show();
+                this.pdfSplitter.$setSiblings();
+
+                if (colPdf.getWidth() < 10) {
+                    // Set the Pdf view to half the editor area.
+                    // For some reason we need to do this twice for it to work?
+                    this.pdfSplitter.update(
+                        splitterPanelLeft.getLeft() + 
+                        (colMiddle.getWidth() + this.colPdf.getWidth())/2
+                    );
+                    this.pdfSplitter.update(
+                        splitterPanelLeft.getLeft() + 
+                        (colMiddle.getWidth() + this.colPdf.getWidth())/2
+                    );
+                }
             }
         }
     },
