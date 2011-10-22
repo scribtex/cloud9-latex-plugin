@@ -1,4 +1,6 @@
 <a:application xmlns:a="http://ajax.org/2005/aml">
+    <a:state id="stDebugProcessRunning" active="false" />
+    
     <a:skin id="latex"
       src        = "{require('ext/latex/compile').skin}" 
       media-path = "/static/style/images/"
