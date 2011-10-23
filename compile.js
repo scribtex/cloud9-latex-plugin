@@ -37,8 +37,7 @@ return ext.register("ext/latex/compile", {
     nodes : [],
     
     clsi : {
-        proxiedUrl   : "/clsi",
-        unproxiedUrl : "http://localhost:3001"
+        proxiedUrl   : "/clsi"
     },
     
     hook : function() {
@@ -551,18 +550,22 @@ return ext.register("ext/latex/compile", {
     
     fetchAndParseLog: function() {
         var self = this;
-        
-        var proxiedLogUrl = this.log.url.slice(this.clsi.unproxiedUrl.length, this.log.url.length);
-        proxiedLogUrl = this.clsi.proxiedUrl + proxiedLogUrl;
-        
-        apf.ajax(proxiedLogUrl, {
-            method   : "GET",
-            callback : function(data, state, extra) {
-                self.log.content = data;
-                self.setLogTabToLog(self.log.content);
-                self.setState("done");
-            }
-        });
+       
+        var pathRegex = /(?:https?:\/\/)?[^\/]*(.*)/;
+        if (m = this.log.url.match(pathRegex)) {
+            var proxiedLogUrl = this.clsi.proxiedUrl + m[1];
+            apf.ajax(proxiedLogUrl, {
+                method   : "GET",
+                callback : function(data, state, extra) {
+                    self.log.content = data;
+                    self.setLogTabToLog(self.log.content);
+                    self.setState("done");
+                }
+            });
+        } else {
+            self.setLogTabToLog("");
+            self.setState("done");
+        }
     },
     
     setState: function(state) {
