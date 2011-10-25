@@ -37,7 +37,7 @@ return ext.register("ext/latex/compile", {
     nodes : [],
     
     clsi : {
-        proxiedUrl   : "/clsi"
+        proxiedUrl   : cloud9config.urlNamespace + "/clsi"
     },
     
     hook : function() {
